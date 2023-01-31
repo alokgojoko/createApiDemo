@@ -1,0 +1,43 @@
+{
+   "user":{
+      "title":"Miss",
+      "first_name":"JOANNA",
+      "middle_name":"ROSI",
+      "last_name":"CURRIN",
+      "email":"mcbDDs@test12811.com",
+      "phone":"07770065929",
+      "dob":"1987-02-12",
+      "account_number":"55779911",
+      "sort_code":"200000",
+      "employment_sector":"Engineering",
+      "employment_position":"Assembly Worker",
+      "association":"GMB",
+      "addresses":[
+         {
+            "abodeNumber":"",
+            "buildingNumber":"",
+            "buildingName":"ST LAWRENCE JEWRY",
+            "street":"GRESHAM STREET",
+            "city":"LONDON",
+            "post_code":"EC2V 5AA",
+            "from":"2017-01",
+            "to":"2018-01",
+            "residential_status":"OWNER_WITH_MORTGAGE"
+         }
+      ]
+   },
+   "loan":{
+      "amount":"2000",
+      "currency":"GBP",
+      "termInMonths":"12",
+      "rentOrMortgage":"500.00",
+      "income":"50000",
+      "employer":"eco labs",
+      "purpose":"Other",
+      "purpose_if_other":"Education",
+      "outgoings":"110",
+      "employmentStatus":"em"
+   },
+   "aggregator":"FREEDOM_FN",
+   "loanProductID":"L-0015"
+}
