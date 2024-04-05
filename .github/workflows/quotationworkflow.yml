@@ -14,7 +14,7 @@ jobs:
         uses: QAInsights/PerfAction@v5.6.2
         with:
     # jmeter test plan to execute
-          test-plan-path: './PerformanceTests/CC/Perf_test_UAT_CC-Integration_QuotationWorkflow.jmx'
+          test-plan-path: './Perf_test_UAT_CC-Integration_QuotationWorkflow.jmx'
       - name: Upload Results
         uses: actions/upload-artifact@v4
         with:
