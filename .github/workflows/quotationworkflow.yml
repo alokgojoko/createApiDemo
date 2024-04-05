@@ -2,6 +2,10 @@ name: Run performance for CC Quotation Workflow
 on:
   workflow_dispatch: { }
 
+env:
+    RUN_NAME: ${{ github.run_name }}
+    JMETER_CONFIG_FNAME: 'tmp_config.jmx'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,14 +18,16 @@ jobs:
         uses: QAInsights/PerfAction@v5.6.2
         with:
     # jmeter test plan to execute
-          test-plan-path: './Perf_test_UAT_CC-Integration_QuotationWorkflow.jmx'
+          test-plan-path: './PerformanceTests/CC/Perf_test_UAT_CC-Integration_QuotationWorkflow.jmx'
       - name: Upload Results
         uses: actions/upload-artifact@v4
         with:
-          name: jmeter-results
-          path: result.jtl
+          name: jmeter-results_${{ env.NOW }}
+          path: |
+              dashboard/
+              testresults.jtl
       - name: Upload HTML Reports
         uses: actions/upload-artifact@v4
         with:
-          name: jmeter-html-reports
+          name: jmeter-html-reports_${{ env.NOW }}
           path: reports
