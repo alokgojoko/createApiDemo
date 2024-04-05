@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan">
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments"/>
+      </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="testPerformance">
+        <stringProp name="ThreadGroup.num_threads">${ThreadCount}</stringProp>
+        <intProp name="ThreadGroup.ramp_time">1</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <stringProp name="LoopController.loops">300</stringProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="QuotationWorkflow-${counter_value}">
+          <stringProp name="HTTPSampler.domain">api-uat.amplificapital.com</stringProp>
+          <stringProp name="HTTPSampler.port">443</stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+          <stringProp name="HTTPSampler.path">o/quotation-workflow</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+            <collectionProp name="Arguments.arguments">
+              <elementProp name="" elementType="HTTPArgument">
+                <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                <stringProp name="Argument.value">${post}</stringProp>
+                <stringProp name="Argument.metadata">=</stringProp>
+              </elementProp>
+            </collectionProp>
+          </elementProp>
+        </HTTPSamplerProxy>
+        <hashTree/>
+        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="JSR223 PreProcessor">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters">${__RandomString(8,abc12345,)}</stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">import groovy.json.JsonBuilder
+
+class Address {
+    int abodeNumber
+    int buildingNumber
+    String buildingName
+    String street
+    String postCode
+    String city
+    String country
+    String county
+    int numberOfYearsLived
+    int numberOfMonthsLived
+    String from
+    String to
+    
+    Address(int abode, int buildingNo, String buildingName, String Street, String post, String city, String country, String county, int noyl, int noml, String from, String to) {
+        this.abodeNumber = abode
+        this.buildingNumber = buildingNo
+        this.buildingName = buildingName
+        this.street = Street
+        this.postCode = post
+        this.city = city
+        this.country = country
+        this.county = county
+        this.numberOfYearsLived = noyl
+        this.numberOfMonthsLived = noml
+        this.from = from
+        this.to = to
+    }
+}
+
+class Fin {
+    int annualIncome
+    int monthlyPaymentTowardsResidence
+    Boolean needCashAdvance
+    int numberOfDependents
+    int dependentsCost
+    
+    Fin(int anIncome, int monthlyPayment, Boolean Advance, int nod, int dcost) {
+        this.annualIncome = anIncome
+        this.monthlyPaymentTowardsResidence = monthlyPayment
+        this.needCashAdvance = Advance
+        this.numberOfDependents = nod
+        this.dependentsCost = dcost
+    }
+}
+
+class Association {
+    String associationType
+    String associationName
+    String associationId
+    
+    Association(String assType, String assName, String assId) {
+        this.associationType = assType
+        this.associationName = assName
+        this.associationId = assId
+    }
+}
+
+class Occupation {
+    String employmentStatus
+    String occupationName
+    String employmentSector
+    String employerName
+    Association association
+    Boolean keyWorker
+    
+    Occupation(String empstatus, String OccName, String empSector,String employerName, String assType, String assName, String assId,Boolean keyWorker) {
+        this.employmentStatus = empstatus
+        this.occupationName = OccName
+        this.employmentSector = empSector
+        this.employerName=employerName
+        this.association = new Association(assType, assName, assId)
+        this.keyWorker=keyWorker
+    }
+}
+class Residency {
+    String residentialStatus
+    Address[] addresses
+    
+    Residency(String resStatus, Address[] addresses) {
+        this.residentialStatus = resStatus
+        this.addresses = addresses
+    }
+}
+
+class UserData {
+    String Title
+    String FirstName
+    String LastName
+    String DateOfBirth
+    String email
+    Fin finances
+    Occupation occupation
+    Residency	residency
+    UserData(String Title, String FirstName, String LastName, String DateOfBirth, String email, Fin finances,Residency residency, String empstatus, String OccName, String empSector,String employerName, String assType, String assName, String assId, Boolean keyWorker) {
+        this.Title = Title
+        this.FirstName = FirstName
+        this.LastName = LastName
+        this.DateOfBirth = DateOfBirth
+        this.email = email
+        this.finances = finances
+        this.residency=residency
+        this.occupation = new Occupation(empstatus, OccName, empSector,employerName, assType, assName, assId,keyWorker)
+        
+    }
+}
+
+
+
+class TripleLock {
+    String searchReason
+    int preferredCreditLimit
+    int minPreferredCreditLimit
+    int maxPreferredCreditLimit
+    
+    TripleLock(String searchReason, int prCrdLimit, int minprCrdLimit, int maxprCrdLimit) {
+        this.searchReason = searchReason
+        this.preferredCreditLimit = prCrdLimit
+        this.minPreferredCreditLimit = minprCrdLimit
+        this.maxPreferredCreditLimit = maxprCrdLimit
+    }
+}
+
+class Request {
+    String aggregatorCode
+    String externalReferenceId
+    UserData userData
+   
+    TripleLock tripleLock
+    String phone
+    
+    Request(String aggCode, String extrnl, UserData userData, TripleLock tripleLock, String phone) {
+        this.aggregatorCode = aggCode
+        this.externalReferenceId = extrnl
+        this.userData = userData
+        
+        this.tripleLock=tripleLock
+        this.phone = phone
+    }
+}
+def inp=args[0]
+def finances = new Fin(18000, 0, true, 0, 0)
+
+
+def home = new Address(0, 148, &quot;&quot;, &quot;HIGH STREET&quot;, &quot;SN8 3AB&quot;, &quot;MARLBOROUGH&quot;, &quot;UK&quot;, &quot;&quot;, 1, 2, &quot;01/01/2018&quot;, &quot;01/01/2023&quot;)
+def residency = new Residency(&quot;HOME_OWNER&quot;, home)
+def userData = new UserData(&quot;Mr&quot;, &quot;Test-&quot;+inp, &quot;accept&quot;, &quot;1999-06-11&quot;, &quot;testing001-&quot;+inp+&quot;@yopmail.com&quot;, finances,residency, &quot;EMPLOYED&quot;, &quot;oAccount Director&quot;, &quot;finances&quot;, &quot;finances&quot;,&quot;TRUST&quot;, &quot;name&quot;, &quot;associationId&quot;, true)
+def tripleLock = new TripleLock(&quot;just-browsing&quot;, 8000, 200, 1000)
+def request = new Request(&quot;CLEARSCR&quot;, &quot;testing-&quot;+inp, userData, tripleLock, &quot;7488855300&quot;)
+
+def newRequest = new JsonBuilder(request).toPrettyString();
+vars.put(&quot;post&quot;,newRequest);
+
+
+//def json=new JsonBuilder(Request).toPrettyString();
+//vars.put(&quot;post&quot;,json);</stringProp>
+        </JSR223PreProcessor>
+        <hashTree/>
+        <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+          <collectionProp name="HeaderManager.headers">
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">Content-Type</stringProp>
+              <stringProp name="Header.value">application/json</stringProp>
+            </elementProp>
+            <elementProp name="" elementType="Header">
+              <stringProp name="Header.name">X-API-KEY</stringProp>
+              <stringProp name="Header.value">qHbEiHTjix7g8KhQJzfvx6mg6OTr4wNg8hfjA5Q3</stringProp>
+            </elementProp>
+          </collectionProp>
+        </HeaderManager>
+        <hashTree/>
+        <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+          <collectionProp name="Arguments.arguments">
+            <elementProp name="ThreadCount" elementType="Argument">
+              <stringProp name="Argument.name">ThreadCount</stringProp>
+              <stringProp name="Argument.value">5</stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+            <elementProp name="Counter" elementType="Argument">
+              <stringProp name="Argument.name">Counter</stringProp>
+              <stringProp name="Argument.value"></stringProp>
+              <stringProp name="Argument.metadata">=</stringProp>
+            </elementProp>
+          </collectionProp>
+        </Arguments>
+        <hashTree/>
+        <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter">
+          <stringProp name="CounterConfig.start">1</stringProp>
+          <stringProp name="CounterConfig.end"></stringProp>
+          <stringProp name="CounterConfig.incr">1</stringProp>
+          <stringProp name="CounterConfig.name">counter_value</stringProp>
+          <stringProp name="CounterConfig.format"></stringProp>
+          <boolProp name="CounterConfig.per_user">false</boolProp>
+        </CounterConfig>
+        <hashTree/>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="RespTimeGraphVisualizer" testclass="ResultCollector" testname="Response Time Graph">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="GraphVisualizer" testclass="ResultCollector" testname="Graph Results">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
