@@ -1,4 +1,4 @@
-name: Run performance for CC Quotation Workflow
+name: CC Quotation Workflow
 on:
   workflow_dispatch: { }
 
